@@ -84,7 +84,7 @@ public:
   }
 
   void run() {
-    if (!isActive) return;
+    if (!isActive || volume == 0) return;
 
     if (useAcceleration) {
       if (stepper.distanceToGo() == 0)
