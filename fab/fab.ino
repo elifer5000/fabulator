@@ -10,12 +10,12 @@ Stepper steppers[NUM_STEPPERS] = {
 };
 
 // create a random integer from 0 - bound
-unsigned int rng(int bound) {
-  static unsigned int y = 0;
-  y += micros(); // seeded with changing number
-  y ^= y << 2; y ^= y >> 7; y ^= y << 7;
-  return (y / 65535.0f) * bound;
-}
+//unsigned int rng(int bound) {
+//  static unsigned int y = 0;
+//  y += micros(); // seeded with changing number
+//  y ^= y << 2; y ^= y >> 7; y ^= y << 7;
+//  return (y / 65535.0f) * bound;
+//}
 
 byte i;
 
@@ -25,21 +25,21 @@ void setupSteppers() {
     }
 }
 
-unsigned long start = 0, current = 0, total = 0;
+//unsigned long start = 0, current = 0, total = 0;
 
 void setup() {
-    Serial.begin(500000);
+    Serial.begin(115200);
     setupSteppers();
-    start = millis();
+//    start = millis();
 
 //    for (i = 0; i < NUM_STEPPERS; i++) {
 //        steppers[i].setNote(440, 5);
 //      }
 }
 
-int f = 0, s = 1;
+//int f = 0, s = 1;
 void loop() {
-    current = millis();
+//    current = millis();
 
 //    if (current - start > 10) {
 //      for (i = 0; i < NUM_STEPPERS; i++) {
@@ -67,12 +67,12 @@ void handleSerial() {
         int vol = idAndVol & 0xf; //bottom_nibble
         int note = word(speedhi, speedlo);
 
-//        Serial.print("Got: ");
-//        Serial.print(id);
-//        Serial.print(" ");
-//        Serial.print(vol);
-//        Serial.print(" ");
-//        Serial.println(note);
+        Serial.print("Got: ");
+        Serial.print(id);
+        Serial.print(" ");
+        Serial.print(vol);
+        Serial.print(" ");
+        Serial.println(note);
 
         steppers[id].setNote(note, vol);
     }

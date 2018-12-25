@@ -44,7 +44,7 @@ class PulseEffect(PeriodicEffect):
 
 class VolumeSwellEffect(PeriodicEffect):
     def __init__(self):
-        super.__init__()
+        PeriodicEffect.__init__(self)
         self.volume = 1
 
     def getVolume(self):
@@ -56,7 +56,7 @@ class VolumeSwellEffect(PeriodicEffect):
 
 class VibratoEffect(PeriodicEffect):
     def __init__(self):
-        super.__init__()
+        PeriodicEffect.__init__(self)
         self.sign = 2
 
     def getSpeedFactor(self):
@@ -76,10 +76,10 @@ class VibratoEffect(PeriodicEffect):
 
 class RandomEffect(PeriodicEffect):
     def __init__(self):
-        super.__init__()
+        PeriodicEffect.__init__(self)
 
 
-class EffectManager:
+class EffectsManager:
     def __init__(self):
         self.effects = {
             "pulse": PulseEffect(),
@@ -88,9 +88,9 @@ class EffectManager:
             "random": RandomEffect()
         }
 
-    def setup(self, initial_milllis):
+    def setup(self, initial_millis):
         for effect in self.effects.values():
-            effect.setup(initial_milllis)
+            effect.setup(initial_millis)
 
     def run(self, current_millis, volume):
         for effect in self.effects.values():
@@ -111,5 +111,5 @@ class EffectManager:
     def setPeriod(self, effect_type, period):
         self.effects[effect_type].setPeriod(period)
 
-    def setRange(self, effect_type, range):
-        self.effects[effect_type].setRange(range)
+    def setRange(self, effect_type, _range):
+        self.effects[effect_type].setRange(_range)
