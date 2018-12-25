@@ -6,18 +6,21 @@ from EffectsManager import EffectsManager
 def current_milli_time():
     return int(round(time.time() * 1000))
 
+
 def freq_calc(_note):
     return math.pow(2.0, (_note - 69) / 12.0) * 440.0
+
 
 class Stepper:
     def __init__(self, _id, serial):
         self.id = _id
         self.serial = serial
         self.isActive = False
+        self.note = 0
         self.speed = 0
         self.speedFactor1 = 1.0
         self.speedFactor2 = 1.0
-        self.totalSpeed = 0
+        self.speedTotal = 0
 
         self.volume = 5
 
@@ -29,29 +32,25 @@ class Stepper:
 
     def run(self, current_millis):
         if self.isActive:
-            (volumeTmp, effectsSpeedFactor) = self.effects_manager.run(current_millis, self.volume)
+            (volume, effectsSpeedFactor) = self.effects_manager.run(current_millis, self.volume)
         else:
-            (volumeTmp, effectsSpeedFactor) = (-1, 1)
+            (volume, effectsSpeedFactor) = (self.volume, 1)
 
-        # if volumeTmp == 0:
-        #     return
+        speed = self.speedTotal * effectsSpeedFactor
 
-        # pitch = self.speed * self.speedFactor1 * self.speedFactor2 * effectsSpeedFactor
+        self.sendToSerial(int(speed), volume)
 
-        # if volumeTmp != -1 and volumeTmp != self.volume:
-        #     self.volume = volumeTmp
-            # self.setVolume()
-
-        self.sendToSerial()
+    def updatePitch(self):
+        self.speedTotal = self.speed * self.speedFactor1 * self.speedFactor2
 
     # note is in Hz
     def setNote(self, note, volume):
         self.note = note
-        self.speed = 0 if note == 0 else int(freq_calc(note))
+        self.speed = 0 if note == 0 else freq_calc(note)
         self.volume = volume
         self.isActive = self.speed > 0
         self.effects_manager.setup(current_milli_time())
-        # updatePitch();
+        self.updatePitch()
 
     def getNote(self):
         return self.note
@@ -59,24 +58,23 @@ class Stepper:
     def getVolume(self):
         return self.volume
 
-    def sendToSerial(self):
-        idAndVol = (self.id << 4) | self.volume
-        lobyte = self.speed & 0xff
-        hibyte = (self.speed & 0xff00) >> 8
+    def sendToSerial(self, speed, volume):
+        idAndVol = (self.id << 4) | volume
+        lobyte = speed & 0xff
+        hibyte = (speed & 0xff00) >> 8
         values = bytearray([idAndVol, lobyte, hibyte])
         if self.currentValues is None or self.currentValues != values:
             self.serial.write(values)
             print self.serial.readline()
             self.currentValues = values
 
-
     def setDetune(self, detune):
         self.speedFactor1 = detune
-        #updatePitch();
+        self.updatePitch()
 
     def setPitchShift(self, detune):
         self.speedFactor2 = detune
-        #updatePitch();
+        self.updatePitch()
 
     def setPeriod(self, effectType, period):
         self.effects_manager.setPeriod(effectType, period)

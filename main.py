@@ -9,6 +9,7 @@ import rtmidi
 import serial
 import serial.tools.list_ports
 from StepperManager import StepperManager
+from Stepper import current_milli_time
 
 from rtmidi.midiutil import open_midiinput
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
@@ -20,6 +21,7 @@ for p in ports:
 		print "Connecting to " + p.device
 
 ser = serial.Serial(serialPort, 115200)
+time.sleep(1) # Try allowing some time before starting to send messages
 print "Connected"
 
 # Prompts user for MIDI input port, unless a valid port number or name
@@ -57,11 +59,13 @@ try:
 			message, deltatime = msg
 			timer += deltatime
 			print("[%s] @%0.6f %r" % (port_name, timer, message))
-			note = message[1]
+
 			if message[0] & 0xF0 == NOTE_ON:
-				stepperManager.setNoteOn(note, message[2])
+				stepperManager.setNoteOn(message[1], message[2])
 			elif message[0] & 0xF0 == NOTE_OFF:
-				stepperManager.setNoteOff(note)
+				stepperManager.setNoteOff(message[1])
+			elif message[0] & 0xF0 == CONTROLLER_CHANGE:
+				stepperManager.handleControlChange(message[1], message[2])
 
 			# lobyte = note & 0xff
 			# hibyte = (note & 0xff00) >> 8
@@ -74,13 +78,14 @@ try:
 			# 	ser.write(values)
 			# 	# print ser.readline()
 
+		before = current_milli_time()
 		stepperManager.run()
-		time.sleep(0.05)
+		delta = current_milli_time()
 
-
-
-
-
+		if delta < 5:
+			print(delta)
+			# time.sleep((5 - delta) / 1000) # sleep to complete a 5 ms frame
+		# time.sleep(0.05)
 
 except KeyboardInterrupt:
 	print('')
