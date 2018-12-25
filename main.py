@@ -36,7 +36,12 @@ except (EOFError, KeyboardInterrupt):
 
 print("Entering main loop. Press Control-C to exit.")
 
-stepperManager = StepperManager(ser, 0, 5)
+# stepperManagers = [StepperManager(ser, 0, 5)]
+# stepperManagers = [StepperManager(ser, 0, 5, True)]  # mono
+
+stepperManagers = [StepperManager(ser, 0, 1), StepperManager(ser, 1, 1), StepperManager(ser, 2, 3)]
+
+numManagers = len(stepperManagers)
 
 try:
 	timer = time.time()
@@ -58,14 +63,16 @@ try:
 		if msg:
 			message, deltatime = msg
 			timer += deltatime
-			print("[%s] @%0.6f %r" % (port_name, timer, message))
+
+			channel = message[0] & 0x0F if numManagers > 1 else 0
+			print("[%s:%d] @%0.6f %r" % (port_name, channel, timer, message))
 
 			if message[0] & 0xF0 == NOTE_ON:
-				stepperManager.setNoteOn(message[1], message[2])
+				stepperManagers[channel].setNoteOn(message[1], message[2])
 			elif message[0] & 0xF0 == NOTE_OFF:
-				stepperManager.setNoteOff(message[1])
+				stepperManagers[channel].setNoteOff(message[1])
 			elif message[0] & 0xF0 == CONTROLLER_CHANGE:
-				stepperManager.handleControlChange(message[1], message[2])
+				stepperManagers[channel].handleControlChange(message[1], message[2])
 
 			# lobyte = note & 0xff
 			# hibyte = (note & 0xff00) >> 8
@@ -79,7 +86,8 @@ try:
 			# 	# print ser.readline()
 
 		before = current_milli_time()
-		stepperManager.run()
+		for manager in stepperManagers:
+			manager.run()
 		delta = current_milli_time()
 
 		if delta < 5:
