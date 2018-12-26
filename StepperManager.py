@@ -13,10 +13,14 @@ VIBRATO_RANGE_KNOB  = 26
 
 
 def convertVolume(volume):
-	if volume > 80: return 5
-	if volume > 40: return 4
-	if volume > 20: return 3
-	if volume > 10: return 2
+	if volume > 80:
+		return 5
+	if volume > 40:
+		return 4
+	if volume > 20:
+		return 3
+	if volume > 10:
+		return 2
 
 	return 1
 
@@ -38,12 +42,12 @@ def detuneCalc(maxDetune, val):
 
 
 class StepperManager:
-	def __init__(self, serial, first_id, num_steppers, is_mono = False):
+	def __init__(self, serial, first_id, num_steppers, is_mono=False):
 		self.serial = serial
 		self.numNotes = 0
 		self.numOldNotes = 0
-		self.oldNotesStack = []
-		self.oldVolumesStack = []
+		self.oldNotesStack = [None] * NOTES_BUFFER_SZ
+		self.oldVolumesStack = [None] * NOTES_BUFFER_SZ
 		self.isMono = is_mono
 		self.numSteppers = num_steppers
 
@@ -75,8 +79,8 @@ class StepperManager:
 					idx = i
 
 			if self.numOldNotes < NOTES_BUFFER_SZ:
-				self.oldNotesStack.insert(self.numOldNotes, self.steppers[idx].getNote())
-				self.oldVolumesStack.insert(self.numOldNotes, self.steppers[idx].getVolume())
+				self.oldNotesStack[self.numOldNotes] = self.steppers[idx].getNote()
+				self.oldVolumesStack[self.numOldNotes] = self.steppers[idx].getVolume()
 				self.numOldNotes += 1
 
 			self.steppers[idx].setNote(note, volume)
@@ -103,8 +107,8 @@ class StepperManager:
 				if self.oldNotesStack[i] == note:	# Remove from stack
 					self.numOldNotes -= 1
 					for j in range(i, self.numOldNotes):
-						self.oldNotesStack[j] = self.oldNotesStack[j+1]
-						self.oldVolumesStack[j] = self.oldVolumesStack[j+1]
+						self.oldNotesStack[j] = self.oldNotesStack[j + 1]
+						self.oldVolumesStack[j] = self.oldVolumesStack[j + 1]
 
 					break
 
@@ -118,8 +122,8 @@ class StepperManager:
 			self.steppers[i].setNote(note, volume)
 
 	def setMonoNoteOff(self, note):
-		if note == self.steppers[0].getNote(): # Is this note currently playing?
-			if self.numOldNotes > 0: # Play old note from stack
+		if note == self.steppers[0].getNote():  # Is this note currently playing?
+			if self.numOldNotes > 0:  # Play old note from stack
 				self.numOldNotes -= 1
 				oldNote = self.oldNotesStack[self.numOldNotes]
 				oldVolume = self.oldVolumesStack[self.numOldNotes]
@@ -132,7 +136,7 @@ class StepperManager:
 		else:
 			for i in range(0, self.numOldNotes):
 				if self.oldNotesStack[i] == note:	# Remove from stack
-					self.numOldNotes -=1;
+					self.numOldNotes -= 1
 					for j in range(i, self.numOldNotes):
 						self.oldNotesStack[j] = self.oldNotesStack[j + 1]
 						self.oldVolumesStack[j] = self.oldVolumesStack[j + 1]
