@@ -102,7 +102,7 @@ class StepperManager:
 
 				break
 
-		if i == self.numSteppers: # No active motor with this note
+		if i == self.numSteppers - 1: # No active motor with this note
 			for i in range(0, self.numOldNotes):
 				if self.oldNotesStack[i] == note:	# Remove from stack
 					self.numOldNotes -= 1
