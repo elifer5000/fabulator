@@ -36,9 +36,9 @@ except (EOFError, KeyboardInterrupt):
 
 print("Entering main loop. Press Control-C to exit.")
 
-# stepperManagers = [StepperManager(ser, 0, 5)]
+stepperManagers = [StepperManager(ser, 0, 5)]
 # stepperManagers = [StepperManager(ser, 0, 5, True)]  # mono
-stepperManagers = [StepperManager(ser, 0, 1), StepperManager(ser, 1, 1), StepperManager(ser, 2, 3)] # 3 channels (1, 1, 3)
+# stepperManagers = [StepperManager(ser, 0, 1), StepperManager(ser, 1, 1), StepperManager(ser, 2, 3)] # 3 channels (1, 1, 3)
 
 numManagers = len(stepperManagers)
 
@@ -87,10 +87,10 @@ try:
 		before = current_milli_time()
 		for manager in stepperManagers:
 			manager.run()
-		delta = current_milli_time()
+		delta = current_milli_time() - before
 
-		if delta < 5:
-			print(delta)
+		# if delta < 5:
+		# 	print(delta)
 			# time.sleep((5 - delta) / 1000) # sleep to complete a 5 ms frame
 		# time.sleep(0.05)
 
