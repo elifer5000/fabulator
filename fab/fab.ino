@@ -67,12 +67,12 @@ void handleSerial() {
         int vol = idAndVol & 0xf; //bottom_nibble
         int note = word(speedhi, speedlo);
 
-        Serial.print("Got: ");
-        Serial.print(id);
-        Serial.print(" ");
-        Serial.print(vol);
-        Serial.print(" ");
-        Serial.println(note);
+//        Serial.print("Got: ");  // For debugging
+//        Serial.print(id);
+//        Serial.print(" ");
+//        Serial.print(vol);
+//        Serial.print(" ");
+//        Serial.println(note);
 
         steppers[id].setNote(note, vol);
     }

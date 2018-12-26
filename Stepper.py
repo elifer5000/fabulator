@@ -48,7 +48,7 @@ class Stepper:
         self.note = note
         self.speed = 0 if note == 0 else freq_calc(note)
         self.volume = volume
-        self.isActive = self.speed > 0
+        self.isActive = self.speed > 0 and self.volume > 0
         self.effects_manager.setup(current_milli_time())
         self.updatePitch()
 
@@ -65,7 +65,7 @@ class Stepper:
         values = bytearray([idAndVol, lobyte, hibyte])
         if self.currentValues is None or self.currentValues != values:
             self.serial.write(values)
-            print self.serial.readline()
+            # print self.serial.readline()
             self.currentValues = values
 
     def setDetune(self, detune):
