@@ -36,9 +36,9 @@ except (EOFError, KeyboardInterrupt):
 
 print("Entering main loop. Press Control-C to exit.")
 
-stepperManagers = [StepperManager(ser, 0, 5)]
+# stepperManagers = [StepperManager(ser, 0, 5)]
 # stepperManagers = [StepperManager(ser, 0, 5, True)]  # mono
-# stepperManagers = [StepperManager(ser, 0, 1), StepperManager(ser, 1, 1), StepperManager(ser, 2, 3)] # 3 channels (1, 1, 3)
+stepperManagers = [StepperManager(ser, 0, 1), StepperManager(ser, 1, 1), StepperManager(ser, 2, 3)] # 3 channels (1, 1, 3)
 
 numManagers = len(stepperManagers)
 
