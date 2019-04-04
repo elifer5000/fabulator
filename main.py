@@ -64,6 +64,7 @@ try:
 			timer += deltatime
 
 			channel = message[0] & 0x0F if numManagers > 1 else 0
+			if channel > numManagers-1: continue
 			print("[%s:%d] @%0.6f %r" % (port_name, channel, timer, message))
 
 			if message[0] & 0xF0 == NOTE_ON:
@@ -71,7 +72,8 @@ try:
 			elif message[0] & 0xF0 == NOTE_OFF:
 				stepperManagers[channel].setNoteOff(message[1])
 			elif message[0] & 0xF0 == CONTROLLER_CHANGE:
-				stepperManagers[channel].handleControlChange(message[1], message[2])
+				if len(message) == 3:
+					stepperManagers[channel].handleControlChange(message[1], message[2])
 
 			# lobyte = note & 0xff
 			# hibyte = (note & 0xff00) >> 8
