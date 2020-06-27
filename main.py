@@ -18,11 +18,11 @@ ports = list(serial.tools.list_ports.comports())
 for p in ports:
 	if p.manufacturer is not None and "Arduino" in p.manufacturer:
 		serialPort = p.device
-		print "Connecting to " + p.device
+		print("Connecting to " + p.device)
 
 ser = serial.Serial(serialPort, 115200)
 time.sleep(1) # Try allowing some time before starting to send messages
-print "Connected"
+print("Connected")
 
 # Prompts user for MIDI input port, unless a valid port number or name
 # is given as the first argument on the command line.
