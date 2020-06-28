@@ -41,6 +41,8 @@ except (EOFError, KeyboardInterrupt):
 
 print("Entering main loop. Press Control-C to exit.")
 
+# Stepper manager constructor takes: serial, first_id, num_steppers, is_mono
+
 # stepperManagers = [StepperManager(ser, 0, 5)]
 # stepperManagers = [StepperManager(ser, 0, 5, True)]  # mono
 stepperManagers = [StepperManager(ser, 0, 1), StepperManager(ser, 1, 1), StepperManager(ser, 2, 3)] # 3 channels (1, 1, 3)
