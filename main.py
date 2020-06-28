@@ -14,11 +14,16 @@ from Stepper import current_milli_time
 from rtmidi.midiutil import open_midiinput
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
 
+serialPort = None
 ports = list(serial.tools.list_ports.comports())
 for p in ports:
 	if p.manufacturer is not None and "Arduino" in p.manufacturer:
 		serialPort = p.device
 		print("Connecting to " + p.device)
+
+if serialPort is None:
+	print("No Arduino found - abort")
+	sys.exit()
 
 ser = serial.Serial(serialPort, 115200)
 time.sleep(1) # Try allowing some time before starting to send messages
