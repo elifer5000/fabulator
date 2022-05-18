@@ -3,6 +3,8 @@ A polyphonic, volume sensitive, multi-channel stepper motor organ with some effe
 
 https://www.youtube.com/watch?v=GinPW0C-tOg
 
+![fabulator](fabulator.jpeg)
+
 ## Requirements:
 Python RTMidi: https://pypi.python.org/pypi/python-rtmidi
 PySerial https://pypi.org/project/pyserial/
